@@ -1,0 +1,56 @@
+# ApplicationSet for dev, staging, and prod.
+# PLACEHOLDER: repoURL is not a real remote. Point it at this repo after publication.
+# Dev and staging sync automatically. Prod stays manual because automated is "false".
+# Do not apply this together with argocd/application.yaml; both define status-api-dev.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: status-api
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: status-api
+    app.kubernetes.io/part-of: jenkins-gitops-pipeline
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - env: dev
+            namespace: status-api-dev
+            automated: "true"
+          - env: staging
+            namespace: status-api-staging
+            automated: "true"
+          - env: prod
+            namespace: status-api-prod
+            automated: "false"
+  template:
+    metadata:
+      name: "status-api-{{.env}}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/name: status-api
+        app.kubernetes.io/part-of: jenkins-gitops-pipeline
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/PLACEHOLDER_ORG/jenkins-gitops-pipeline.git
+        targetRevision: main
+        path: "deploy/overlays/{{.env}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{.namespace}}"
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+  templatePatch: |
+    {{- if eq .automated "true" }}
+    spec:
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+    {{- end }}

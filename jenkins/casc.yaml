@@ -1,0 +1,45 @@
+jenkins:
+  systemMessage: >-
+    Local Jenkins controller for the jenkins-gitops-pipeline reference.
+    Portfolio demo. This controller does not deploy the sample service.
+  numExecutors: 2
+  mode: NORMAL
+  scmCheckoutRetryCount: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          name: "Local admin"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+security:
+  GlobalJobDslSecurityConfiguration:
+    useScriptSecurity: false
+
+unclassified:
+  location:
+    url: "http://127.0.0.1:18080/"
+    adminAddress: "applycoding@gmail.com"
+
+jobs:
+  - script: |
+      pipelineJob('status-api') {
+        description('Sample pipeline. The Git remote is a PLACEHOLDER until this repo is published.')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('https://github.com/PLACEHOLDER_ORG/jenkins-gitops-pipeline.git')
+                }
+                branches('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+          }
+        }
+      }

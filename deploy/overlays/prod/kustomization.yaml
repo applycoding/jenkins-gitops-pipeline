@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+namespace: status-api-prod
+
+images:
+  - name: ghcr.io/placeholder/status-api
+    # Placeholder tag. scripts/promote.py replaces newTag. This is not a release.
+    newTag: "0.1.0-prod"
+
+replicas:
+  - name: status-api
+    count: 2
+
+labels:
+  - pairs:
+      app.kubernetes.io/instance: status-api-prod
+    includeSelectors: false
+
+patches:
+  - path: configmap.yaml

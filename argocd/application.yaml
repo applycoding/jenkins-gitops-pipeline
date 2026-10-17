@@ -1,0 +1,26 @@
+# One Application for the dev overlay.
+# PLACEHOLDER: repoURL is not a real remote. Point it at this repo after publication.
+# Apply this file or argocd/applicationset.yaml, not both. Both define status-api-dev.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: status-api-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: status-api
+    app.kubernetes.io/part-of: jenkins-gitops-pipeline
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/PLACEHOLDER_ORG/jenkins-gitops-pipeline.git
+    targetRevision: main
+    path: deploy/overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: status-api-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

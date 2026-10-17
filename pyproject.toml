@@ -1,0 +1,14 @@
+[tool.pytest.ini_options]
+testpaths = ["service/tests", "tests"]
+pythonpath = ["service", "."]
+
+[tool.ruff]
+line-length = 100
+src = ["service", "scripts", "tests"]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["scripts", "status_api"]

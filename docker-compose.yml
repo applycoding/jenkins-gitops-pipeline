@@ -1,0 +1,19 @@
+name: jenkins-gitops-pipeline
+
+services:
+  jenkins:
+    build:
+      context: ./jenkins
+    image: jenkins-gitops-pipeline-jenkins:local
+    ports:
+      - "18080:8080"
+    environment:
+      CASC_JENKINS_CONFIG: /var/jenkins_casc/casc.yaml
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:-dev-only-change-me}
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - ./jenkins/casc.yaml:/var/jenkins_casc/casc.yaml:ro
+
+volumes:
+  jenkins-home:
