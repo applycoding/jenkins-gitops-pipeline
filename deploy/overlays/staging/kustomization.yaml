@@ -19,6 +19,7 @@ labels:
   - pairs:
       app.kubernetes.io/instance: status-api-staging
     includeSelectors: false
+    includeTemplates: true
 
 patches:
   - path: configmap.yaml

@@ -78,6 +78,8 @@ def test_ci_invokes_the_same_checks_as_make() -> None:
 
 def test_repo_has_no_credential_material() -> None:
     for path in ROOT.rglob("*"):
+        if path.resolve() == Path(__file__).resolve():
+            continue
         if not path.is_file() or any(part in SKIP for part in path.parts):
             continue
         text = path.read_text(encoding="utf-8", errors="ignore")

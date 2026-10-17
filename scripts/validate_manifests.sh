@@ -77,10 +77,11 @@ for target in "${targets[@]}"; do
     echo "kustomize build produced no output for ${target}" >&2
     exit 1
   fi
+  # kubeconform ignores paths that do not end in .yaml, so pass the document on stdin.
   kubeconform \
     -strict \
     -summary \
     -kubernetes-version "${KUBERNETES_VERSION}" \
-    "${rendered}"
+    - <"${rendered}"
   rm -f "${rendered}"
 done
